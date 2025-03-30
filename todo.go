@@ -41,6 +41,18 @@ func addTodo(filename, newTodo string) error {
 	return saveTodoList(filename, todoList)
 }
 
+func doneTodo(todo_list TodoList, finishedTodoIndex string) TodoList {
+	todos := todo_list.Todos
+	var filteredTodoList TodoList
+	for _, todo  := range todos {
+		firstChar := string([]rune(todo)[0])
+		if finishedTodoIndex != firstChar {
+			filteredTodoList.Todos = append(filteredTodoList.Todos, todo)
+		}
+	}
+	return filteredTodoList
+}
+
 func showTodoList(filename string) {
 	todoList, err := readTodoList(filename)
     if err != nil {
@@ -69,6 +81,13 @@ func main() {
 		}
 		new_todo_index := strconv.Itoa(len(todo_list.Todos)) + ". "
 		addTodo(filename, new_todo_index + new_todo_string)
+	}
+	if os.Args[1] == "done" {
+		finishedTodoNumber := os.Args[2]
+		todo_list, _ := readTodoList(filename)
+		todos := todo_list
+		filteredTodoList := doneTodo(todos, finishedTodoNumber)
+		saveTodoList(filename, filteredTodoList)
 	}
 	showTodoList(filename)
 }
